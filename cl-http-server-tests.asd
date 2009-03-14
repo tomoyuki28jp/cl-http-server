@@ -8,7 +8,7 @@
   :name     "cl-http-server-tests"
   :author   "Tomoyuki Matsumoto <tomoyuki28jp@no-spam@yahoo.co.jp>"
   :licence  "BSD"
-  :description "Common Lisp HTTP Server"
+  :description "tests for cl-http-server"
   :depends-on  (:cl-http-server :anaphora :fiveam :drakma)
   :components  ((:module "tests"
                          :serial  t
