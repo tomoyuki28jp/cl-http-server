@@ -526,7 +526,7 @@
               (cons name (list (cons "name"     (when (plusp size) filename))
                                (cons "type"     (when (plusp size) type))
                                (cons "tmp-name" (when (plusp size) tmp-name))
-                               (cons "size" size)))))))
+                               (cons "size"     size)))))))
 
 (defun rfc2388-callback-form-data (mime-part name)
   (setf (rfc2388-binary:content mime-part)
