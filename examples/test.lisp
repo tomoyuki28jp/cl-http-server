@@ -1,7 +1,3 @@
-; To run:
-; 1. compile and load this file
-; 2. go to http://localhost:8080/
-
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (asdf:oos 'asdf:load-op :cl-http-server))
 
@@ -9,5 +5,14 @@
 (defpackage :cl-http-server-test (:use :cl :cl-http-server))
 (in-package :cl-http-server-test)
 
-;(defparameter *srv* (start-server))
+; http://localhost:8080/test
+(defpage test ()
+  (html :title "Test page title"
+        :body  "Hello, world!"))
+
+; http://localhost:8080/get?get1=hello&get2=world
+(defpage get (:get get1 get2)
+  (html :body (concatenate 'string "get1: " get1 " get2: " get2)))
+
+(defparameter *srv* (start-server))
 ;(stop-server *srv*)
