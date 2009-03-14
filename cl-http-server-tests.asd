@@ -5,7 +5,7 @@
 (in-package :cl-http-server-tests-asd)
 
 (defsystem  :cl-http-server-tests
-  :name     "cl-http-server tests"
+  :name     "cl-http-server-tests"
   :author   "Tomoyuki Matsumoto <tomoyuki28jp@no-spam@yahoo.co.jp>"
   :licence  "BSD"
   :description "Common Lisp HTTP Server"
