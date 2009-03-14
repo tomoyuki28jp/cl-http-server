@@ -1,0 +1,16 @@
+History
+====================
+This HTTP Server used to be a part of web4r, a common lisp web application 
+framework. I haven't done much tests on it after dividing it from web4r system. 
+(All the written unit tests passed though.)
+
+Library dependencies
+====================
+anaphora - http://common-lisp.net/project/anaphora/
+cl-ppcre - http://www.weitz.de/cl-ppcre/
+usocket - http://common-lisp.net/project/usocket/
+bordeaux-threads - http://common-lisp.net/project/bordeaux-threads/
+cl-fad - http://www.weitz.de/cl-fad/
+trivial-shell - http://common-lisp.net/project/trivial-shell/ 
+flexi-streams - http://www.weitz.de/flexi-streams/
+rfc2388-binary - http://common-lisp.net/project/ucw/repos/rfc2388-binary/
