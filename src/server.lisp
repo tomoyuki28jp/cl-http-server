@@ -272,11 +272,8 @@
                ,@(awhen (position :get  args)
                         (loop for p in (parse-args (subseq args (1+ it)))
                               collect `(,p (get-param ,(concat p))))))
-           (if (and (member :auth ',args) (null (login-user)))
-               (redirect (page-uri (string-downcase
-                                    (concat (user-login-page)))))
-               (progn
-                 ,@body)))))))
+           (progn
+             ,@body))))))
 
 (defmacro defpage (name (&rest args) &rest body)
   `(set-page ',name (page-lambda (,@args) ,@body)))
