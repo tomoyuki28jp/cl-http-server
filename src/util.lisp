@@ -1,7 +1,7 @@
 (in-package :cl-http-server)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun concat (&rest args)
+  (defun ->string (&rest args)
     (with-output-to-string (s)
       (dolist (a args)
         (when a
@@ -9,7 +9,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun join (joiner lst)
-    (format nil (concat "~{~A~^" joiner "~}") lst)))
+    (format nil (->string "~{~A~^" joiner "~}") lst)))
 
 (defun assoc-ref (item alist &rest args)
   (awhen (apply #'assoc item alist args)
@@ -20,7 +20,7 @@
     `(let ((,gs ,struct))
        (symbol-macrolet
            ,(mapcar #'(lambda (f)
-                        `(,f (,(intern (concat name "-" f)) ,gs)))
+                        `(,f (,(intern (->string name "-" f)) ,gs)))
                     fields)
          ,@body))))
 
@@ -57,7 +57,7 @@
 (defun make-keyword (x)
   (if (keywordp x)
       x
-      (let ((str (if (stringp x) x (concat x))))
+      (let ((str (if (stringp x) x (->string x))))
         (intern (string-upcase str) :keyword))))
 
 (defun random-hex-string (length)
@@ -65,50 +65,7 @@
           length (random (expt 16 length) *the-random-state*)))
 
 (defun preg-match (regexp str)
-  (cl-ppcre:scan-to-strings
-   (cl-ppcre:create-scanner regexp) str))
-
-(defun position-str (delimiter str &key (start 0))
-  (when (plusp start)
-    (setq str (subseq str start (length str))))
-  (let ((del-len  (length delimiter))
-        (str-len  (length str))
-        (1st-char (char delimiter 0)))
-    (loop for i = 0 then (1+ j)
-          as  j = (position 1st-char str :start i)
-          when (and j
-                    (<= (+ j del-len) str-len)
-                    (string= delimiter (subseq str j (+ j del-len))))
-            return (+ j start)
-          end
-          while j)))
-
-(defgeneric split (delimiter str)
-  (:documentation "Split a string by a delimiter"))
-
-(defmethod split ((delimiter character) (str string))
-  (loop for i = 0 then (1+ j)
-        as  j = (position delimiter str :start i)
-        collect (subseq str i j)
-        while j))
-
-(defmethod split ((delimiter string) (str string))
-  (if (or (string= delimiter "")
-          (string= delimiter str))
-    (list str)
-    (let ((del-len (length delimiter)))
-      (loop for i = 0 then (+ j del-len)
-            as  j = (position-str delimiter str :start i)
-            collect (subseq str i j)
-            while j))))
-
-(defun replace-str (search replace str)
-  (if (null search)
-    str
-    (let ((s (split search str)))
-      (if (plusp (length s))
-        (join replace s)
-        str))))
+  (scan-to-strings (create-scanner regexp) str))
 
 (defun uri-encode (str)
   (with-output-to-string (s)
@@ -147,7 +104,7 @@
 
 (defun uniq-file-name (dir &optional (name-length 10))
   (dotimes (x 5)
-    (let ((file (concat dir (random-hex-string name-length))))
+    (let ((file (->string dir (random-hex-string name-length))))
       (unless (probe-file file)
         (return-from uniq-file-name file)))))
 

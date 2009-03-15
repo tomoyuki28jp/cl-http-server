@@ -90,42 +90,6 @@
   (let ((s "ADLBDB"))
     (is (string= (preg-match "^[A-Z]+$" s) s))))
 
-(test position-str
-  (is (=    (position-str "1" "12345") 0))
-  (is (=    (position-str "3" "12345") 2))
-  (is (=    (position-str "5" "12345") 4))
-  (is (null (position-str "6" "12345")))
-  (is (=    (position-str "123" "12345") 0))
-  (is (=    (position-str "345" "12345") 2))
-  (is (null (position-str "456" "12345")))
-  (is (=    (position-str "12345" "12345") 0))
-  (is (null (position-str "123456" "12345"))))
-
-(test split
-  ; split by a character
-  (is (tree-equal (split #\Space "123 45") '("123" "45") :test #'equal))
-  (is (tree-equal (split #\Space " 12345") '("" "12345") :test #'equal))
-  (is (tree-equal (split #\Space "12345 ") '("12345" "") :test #'equal))
-  (is (tree-equal (split #\Space "12345") '("12345") :test #'equal))
-  (is (tree-equal (split #\Space "") '("") :test #'equal))
-  ; split by a string
-  (is (tree-equal (split "1" "12345") '("" "2345") :test #'equal))
-  (is (tree-equal (split "5" "12345") '("1234" "") :test #'equal))
-  (is (tree-equal (split "6" "12345") '("12345") :test #'equal))
-  (is (tree-equal (split ""  "12345") '("12345") :test #'equal))
-  (is (tree-equal (split "123" "12345") '("" "45") :test #'equal))
-  (is (tree-equal (split "345" "12345") '("12" "") :test #'equal))
-  (is (tree-equal (split "12345" "12345") '("12345") :test #'equal))
-  (is (tree-equal (split "12345" "123456789") '("" "6789") :test #'equal))
-  (is (tree-equal (split "123" "123456789") '("" "456789") :test #'equal))
-  (is (tree-equal (split "789" "123456789") '("123456" "") :test #'equal)))
-
-(test replace-str
-  (is (string= (replace-str "2"  "" "1212121") "1111"))
-  (is (string= (replace-str "22" "" "1212212122") "121121"))
-  (is (string= (replace-str "222" "" "12212221222212222") "12211212"))
-  (is (string= (replace-str "222" "" "22212221222") "11")))
-
 (test uri-encode
   (is (string= (uri-encode "ニュース速報")
                "%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%B9%E9%80%9F%E5%A0%B1"))

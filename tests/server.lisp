@@ -11,8 +11,8 @@
     (p a)))
 
 (defun string=* (str1 str2)
-  (string= (replace-str *nl* "" str1)
-           (replace-str *nl* "" str2)))
+  (string= (regex-replace-all *nl* str1 "")
+           (regex-replace-all *nl* str2 "")))
 
 (defmacro shtml= (shtml html)
   `(let ((*http-char-stream* (make-string-output-stream)))
@@ -22,7 +22,7 @@
 
 (defun file-content= (file &optional content)
   (unless content
-    (setf content (http-request (concat "http://localhost:8080/" file))))
+    (setf content (http-request (->string "http://localhost:8080/" file))))
   (let ((e (if (stringp content) 'base-char '(unsigned-byte 8))))
     (with-open-file (in (merge-pathnames file *test-public-dir*) :element-type e)
       (let* ((length (file-length in))
@@ -41,13 +41,13 @@
 
 (defun status-code= (uri status-code)
   (multiple-value-bind (body status-code* headers uri stream close reason-phrase)
-      (http-request (concat "http://localhost:8080/" uri))
+      (http-request (->string "http://localhost:8080/" uri))
     (declare (ignore body headers uri stream close reason-phrase))
     (= status-code* status-code)))
 
 (defun content-type= (uri content-type)
   (multiple-value-bind (body status-code headers uri stream close reason-phrase)
-      (http-request (concat "http://localhost:8080/" uri))
+      (http-request (->string "http://localhost:8080/" uri))
     (declare (ignore body status-code uri stream close reason-phrase))
     (equalp content-type
             (awhen (cl-http-server::assoc-ref :content-type headers)
@@ -70,8 +70,8 @@
 ; http://bknr.net/trac/changeset/4322
 (defun http-request* (uri &rest args)
   (apply #'http-request
-         (append (list (replace-str "http://localhost:8080/"
-                                    "http://localhost:8080//" uri))
+         (append (list (regex-replace-all "http://localhost:8080/"
+                                    uri "http://localhost:8080//"))
                  args)))
 
 (test static-file
@@ -289,7 +289,7 @@
 
 (test file-data
   (defpage file-data-test1 ()
-    (p (concat (file-name "foo") "-"
+    (p (->string (file-name "foo") "-"
                (file-type "foo") "-"
                (file-size "foo"))))
   (is (equal "test.gif-image/gif-1841"

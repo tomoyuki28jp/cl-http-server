@@ -1,7 +1,7 @@
 (in-package :cl-user)
 
 (defpackage :cl-http-server
-  (:use :cl :anaphora :usocket :cl-fad :flexi-streams)
+  (:use :cl :anaphora :usocket :cl-fad :flexi-streams :cl-ppcre)
   (:export :html
            :*server*
            :*request*

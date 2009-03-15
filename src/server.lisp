@@ -68,7 +68,7 @@
   `(progn
      ,@(loop for d in dirs
              collect `(unless (string= (subseq ,d (1- (length ,d))) "/")
-                        (setf ,d (concat ,d "/")))
+                        (setf ,d (->string ,d "/")))
              collect `(ensure-directories-exist ,d :verbose nil))))
 
 (defun validate-server (server)
@@ -90,7 +90,7 @@
   (setf (server-thread server)
         (bordeaux-threads:make-thread
          (lambda () (start-server-thread server))
-         :name (concat "server-" (server-port server))))
+         :name (->string "server-" (server-port server))))
   server)
 
 (defun start-server-thread (server)
@@ -120,32 +120,32 @@
                           :direction :output
                           :if-exists :append
                           :if-does-not-exist :create)
-    (format stream (concat content "~%"))))
+    (format stream (->string content "~%"))))
 
 (defun access-log ()
   (write-log
-   (concat (server-log-save-dir *server*)
+   (->string (server-log-save-dir *server*)
            "access." (car (split " " (iso-time))) ".log")
    (join " "
          (list (request-remote-addr *request*)
-               (concat "[" (iso-time) "]")
+               (->string "[" (iso-time) "]")
                (qw (request-request-line *request*))
                (response-status-code *response*)
                (qw (header-field "User-Agent"))))))
 
 (defun error-log (&rest content)
   (write-log
-   (concat (if *server* (server-log-save-dir *server*) "/tmp/")
+   (->string (if *server* (server-log-save-dir *server*) "/tmp/")
            "error." (car (split " " (iso-time))) ".log")
-   (join " " (list (concat "[" (iso-time) "]")
-                   (apply #'concat content)))))
+   (join " " (list (->string "[" (iso-time) "]")
+                   (apply #'->string content)))))
 
 (defun debug-log (&rest content)
   (write-log
-   (concat (if *server* (server-log-save-dir *server*) "/tmp/")
+   (->string (if *server* (server-log-save-dir *server*) "/tmp/")
                "debug." (car (split " " (iso-time))) ".log")
-   (join " " (list (concat "[" (iso-time) "]")
-                   (apply #'concat content)))))
+   (join " " (list (->string "[" (iso-time) "]")
+                   (apply #'->string content)))))
 
 ; --- Session ---------------------------------------------------
 
@@ -178,7 +178,7 @@
 
 (defun renew-cookie-lifetime (sid)
   (trivial-shell:shell-command
-   (concat "touch -m " (session-file sid))))
+   (->string "touch -m " (session-file sid))))
 
 (defun get-session (&optional name)
   (awhen (aand *sid* (session-file it))
@@ -268,10 +268,10 @@
                        collect `(,p (or ,p (uri-path ,n))))
                ,@(awhen (position :post args)
                         (loop for p in (parse-args (subseq args (1+ it)))
-                              collect `(,p (post-param ,(concat p)))))
+                              collect `(,p (post-param ,(->string p)))))
                ,@(awhen (position :get  args)
                         (loop for p in (parse-args (subseq args (1+ it)))
-                              collect `(,p (get-param ,(concat p))))))
+                              collect `(,p (get-param ,(->string p))))))
            (progn
              ,@body))))))
 
@@ -284,8 +284,8 @@
 
 (defun %status-page (status-code)
   (let ((reason (reason-phrase status-code)))
-    (html :title (concat status-code " " reason)
-          :body  (concat status-code " " reason))))
+    (html :title (->string status-code " " reason)
+          :body  (->string status-code " " reason))))
 
 (defun status-page (status-code)
   (setf (response-status-code *response*) status-code)
@@ -358,7 +358,7 @@
 
 (defun charset ()
   (aif (response-charset *response*)
-       (concat "; charset=" (string-downcase (concat it)))
+       (->string "; charset=" (string-downcase (->string it)))
        ""))
 
 (defun content-length (content)
@@ -368,7 +368,7 @@
 
 (defun send-header ()
   (flet ((send-http-line (line)
-           (princ (concat line *crlf*) *http-stream*)))
+           (princ (->string line *crlf*) *http-stream*)))
     (with-flexi-stream (*http-stream* :iso-8859-1)
       (send-http-line (response-status-line (response-status-code *response*)))
       (awhen (response-content-type *response*)
@@ -558,7 +558,8 @@
                     (let ((s (split "=" x)))
                       (when (eq (length s) 2)
                         (cons (car s)
-                              (replace-str *crlf* *nl* (nth 1 s)))))))
+                              (regex-replace-all
+                               *crlf* (nth 1 s) *nl*))))))
             it)))
 
 (defun delete-tmp-file ()
@@ -602,7 +603,7 @@
 
 (defun content-type (file)
   (let* ((file  (namestring file))
-         (type  (trivial-shell:shell-command (concat "file " file)))
+         (type  (trivial-shell:shell-command (->string "file " file)))
          (s (split " " (string-trim '(#\Newline) type))))
     (cond ((equalp "image" (nth 2 s))
            (cond ((equalp "PNG"  (nth 1 s)) "image/png")
@@ -613,7 +614,7 @@
                                             "image/x-icon")
           ((equalp "HTML"  (nth 1 s))       "text/html")
           ((equalp "text"  (car (last s)))
-           (let ((ext (string-downcase (car (last (split "." file))))))
+           (let ((ext (string-downcase (car (last (split #\. file))))))
              (cond ((equal "js" ext)        "application/x-javascript")
                    ((equal "css" ext)       "text/css")
                    (t nil))))
@@ -649,16 +650,16 @@
 ; --- Util ------------------------------------------------------
 
 (defun host-uri ()
-  (concat "http://" (header-field "Host") "/"))
+  (->string "http://" (header-field "Host") "/"))
 
 (defun page-uri (&rest args)
-  (concat (host-uri) (join "/" args) "/"))
+  (->string (host-uri) (join "/" args) "/"))
 
 (defun uri-path (n)
   (let* ((u1 (subseq (request-uri *request*) 1))
-         (u2 (let ((u (split "?" u1)))
+         (u2 (let ((u (split #\? u1)))
                    (car u)))
-         (u3 (split "/" u2)))
+         (u3 (split #\/ u2)))
     (aif (nth (1- n) u3)
          (unless (string= it "")
            it))))
