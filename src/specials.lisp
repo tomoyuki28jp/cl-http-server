@@ -1,9 +1,11 @@
 (in-package :cl-http-server)
 
-(defvar *nl* (format nil "~%"))
+(defvar *nl* (format nil "~%")
+  "Newline")
 
 (defvar *crlf*
-  (format nil "~C~C" #\Return #\Linefeed))
+  (format nil "~C~C" #\Return #\Linefeed)
+  "CRLF")
 
 (defvar *server*  nil
   "Instance of the server structure")
@@ -17,7 +19,8 @@
 (defvar *http-stream* *standard-output*
   "HTTP stream")
 
-(defvar *http-char-stream* *standard-output*)
+(defvar *http-char-stream* *standard-output*
+  "HTTP character stream")
 
 (defvar *http-binary-stream* *standard-output*
   "HTTP binary stream")
@@ -28,7 +31,9 @@
 (defvar *sid* nil
   "Session ID")
 
-(defvar *hooks* (make-hash-table))
+(defvar *hooks* (make-hash-table)
+  "Hooks hash table")
 
 (defparameter *the-random-state*
-  (make-random-state t))
+  (make-random-state t)
+  "A fresh random state.")
