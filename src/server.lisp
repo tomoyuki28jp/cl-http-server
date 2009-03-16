@@ -253,10 +253,10 @@
 ; --- Page ------------------------------------------------------
 
 (defun get-page (name)
-  (gethash (make-keyword name) *pages*))
+  (gethash (->keyword name) *pages*))
 
 (defun set-page (name fn)
-  (setf (gethash (make-keyword name) *pages*) fn))
+  (setf (gethash (->keyword name) *pages*) fn))
 
 (defmacro page-lambda ((&rest args) &rest body)
   (flet ((parse-args (args)
@@ -464,7 +464,7 @@
       (with-flexi-stream (*http-stream* :iso-8859-1)
         ; Request-Line like "GET / HTTP/1.1"
         (let ((r (split #\Space (setf request-line (read-request)))))
-          (awhen (pop r) (setf method (make-keyword it)))
+          (awhen (pop r) (setf method (->keyword it)))
           (awhen (pop r)
             (setf uri it)
             (multiple-value-bind (script query get) (parse-uri uri)

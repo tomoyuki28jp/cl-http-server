@@ -7,6 +7,12 @@
         (when a
           (princ a s))))))
 
+(defun ->keyword (x)
+  (if (keywordp x)
+      x
+      (let ((str (if (stringp x) x (->string x))))
+        (intern (string-upcase str) :keyword))))
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun join (joiner lst)
     (format nil (->string "~{~A~^" joiner "~}") lst)))
@@ -53,12 +59,6 @@
 
 (defun qw (str)
   (format nil "\"~A\"" (or str "")))
-
-(defun make-keyword (x)
-  (if (keywordp x)
-      x
-      (let ((str (if (stringp x) x (->string x))))
-        (intern (string-upcase str) :keyword))))
 
 (defun random-hex-string (length)
   (format nil "~v,'0x"

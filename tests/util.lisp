@@ -64,10 +64,10 @@
   (is (string= (qw nil) "\"\""))
   (is (string= (qw "\"") "\"\"\"")))
 
-(test make-keyword
-  (is (eq (make-keyword "k1") :k1))
-  (is (eq (make-keyword 'k2)  :k2))
-  (is (eq (make-keyword :k3)  :k3)))
+(test ->keyword
+  (is (eq (->keyword "k1") :k1))
+  (is (eq (->keyword 'k2)  :k2))
+  (is (eq (->keyword :k3)  :k3)))
 
 (test random-hex-string
  (let ((lst (loop for i from 1 to 10
