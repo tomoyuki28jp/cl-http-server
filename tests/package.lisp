@@ -8,5 +8,5 @@
 (def-suite cl-http-server)
 
 (loop for s in
-      '("ASSOC-REF" "->STRING" "PREG-MATCH" "HTML" "RANDOM-HEX-STRING")
+      '("ASSOC-REF" "->STRING" "PREG-MATCH" "HTML" "RANDOM-STRING")
       do (import (find-symbol s (find-package 'cl-http-server))))

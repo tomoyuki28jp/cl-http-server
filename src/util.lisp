@@ -4,8 +4,7 @@
   (defun ->string (&rest args)
     (with-output-to-string (s)
       (dolist (a args)
-        (when a
-          (princ a s))))))
+        (princ (or a "") s)))))
 
 (defun ->keyword (x)
   (if (keywordp x)
@@ -60,9 +59,11 @@
 (defun qw (str)
   (format nil "\"~A\"" (or str "")))
 
-(defun random-hex-string (length)
-  (format nil "~v,'0x"
-          length (random (expt 16 length) *the-random-state*)))
+(defun random-string (&optional (n 10) (base 16))
+  (with-output-to-string (s)
+    (dotimes (i n)
+      (format s "~VR" base
+              (random base *the-random-state*)))))
 
 (defun preg-match (regexp str)
   (scan-to-strings (create-scanner regexp) str))
@@ -102,9 +103,9 @@
         (incf idx)))
     (octets-to-string vec :external-format :utf-8)))
 
-(defun uniq-file-name (dir &optional (name-length 10))
+(defun uniq-file-name (dir &optional (length 10))
   (dotimes (x 5)
-    (let ((file (->string dir (random-hex-string name-length))))
+    (let ((file (->string dir (random-string length))))
       (unless (probe-file file)
         (return-from uniq-file-name file)))))
 

@@ -252,7 +252,7 @@
                    (http-request "http://localhost:8080/matched1"))))
 
 (test cookie
-  (let ((r (random-hex-string 10)))
+  (let ((r (random-string)))
     (defpage cookie-set-test () (set-cookie "cookie-set-test1" r))
     (defpage cookie-get-test () (p/ (get-cookie "cookie-set-test1")))
     (let ((cookie (make-instance 'cookie-jar)))
@@ -262,7 +262,7 @@
                                      :cookie-jar cookie))))))
 
 (test session
-  (let ((r (random-hex-string 10)))
+  (let ((r (random-string)))
     (defpage session-set-test () (set-session "session-set-test1" r))
     (defpage session-get-test () (p/ (get-session "session-set-test1")))
     (let ((cookie (make-instance 'cookie-jar)))

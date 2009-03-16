@@ -226,7 +226,7 @@
   (server-session-name *server*))
 
 (defun generate-sid ()
-  (let ((sid (random-hex-string 32)))
+  (let ((sid (random-string)))
     (if (valid-sid-p sid)
         (generate-sid)
         (progn

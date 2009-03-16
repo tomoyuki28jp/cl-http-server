@@ -69,13 +69,12 @@
   (is (eq (->keyword 'k2)  :k2))
   (is (eq (->keyword :k3)  :k3)))
 
-(test random-hex-string
+(test random-string
  (let ((lst (loop for i from 1 to 10
-                 collect (random-hex-string 32))))
+                  collect (random-string 32))))
    (loop for r in lst
          as  i from 0
          do (progn
-              (is (string= (preg-match "^[0-9A-F]+$" r) r))
               (is (null (member r (remseq lst i (1+ i)))))))))
 
 (test preg-match
