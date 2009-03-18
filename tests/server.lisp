@@ -290,8 +290,8 @@
 (test file-data
   (defpage file-data-test1 ()
     (p (->string (file-name "foo") "-"
-               (file-type "foo") "-"
-               (file-size "foo"))))
+                 (file-type "foo") "-"
+                 (file-size "foo"))))
   (is (equal "test.gif-image/gif-1841"
              (http-request "http://localhost:8080/file-data-test1"
                            :method :post :content-length t
