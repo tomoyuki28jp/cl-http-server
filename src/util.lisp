@@ -13,8 +13,9 @@
         (intern (string-upcase str) :keyword))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun join (joiner lst)
-    (format nil (->string "~{~A~^" joiner "~}") lst)))
+  (defun join (joiner &rest args)
+    (format nil (->string "~{~A~^" joiner "~}")
+            (remove nil args))))
 
 (defun assoc-ref (item alist &rest args)
   (awhen (apply #'assoc item alist args)

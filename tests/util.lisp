@@ -7,8 +7,8 @@
   (is (string= (concat nil "a" nil "i" nil "u" nil "e" nil "o" nil) "aiueo")))
 
 (test join
-  (is (string= (join "|" '("a" "i" "u")) "a|i|u"))
-  (is (string= (join ""  '("a" "i" "u")) "aiu")))
+  (is (string= (join "|" "a" "i" "u") "a|i|u"))
+  (is (string= (join ""  "a" "i" "u") "aiu")))
 
 (test assoc-ref
   (let ((lst '((200 . "number"))))

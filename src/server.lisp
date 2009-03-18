@@ -127,25 +127,27 @@
    (->string (server-log-save-dir *server*)
            "access." (car (split " " (iso-time))) ".log")
    (join " "
-         (list (request-remote-addr *request*)
-               (->string "[" (iso-time) "]")
-               (qw (request-request-line *request*))
-               (response-status-code *response*)
-               (qw (header-field "User-Agent"))))))
+         (request-remote-addr *request*)
+         (->string "[" (iso-time) "]")
+         (qw (request-request-line *request*))
+         (response-status-code *response*)
+         (qw (header-field "User-Agent")))))
 
 (defun error-log (&rest content)
   (write-log
    (->string (if *server* (server-log-save-dir *server*) "/tmp/")
            "error." (car (split " " (iso-time))) ".log")
-   (join " " (list (->string "[" (iso-time) "]")
-                   (apply #'->string content)))))
+   (join " "
+         (->string "[" (iso-time) "]")
+         (apply #'->string content))))
 
 (defun debug-log (&rest content)
   (write-log
    (->string (if *server* (server-log-save-dir *server*) "/tmp/")
                "debug." (car (split " " (iso-time))) ".log")
-   (join " " (list (->string "[" (iso-time) "]")
-                   (apply #'->string content)))))
+   (join " "
+         (->string "[" (iso-time) "]")
+         (apply #'->string content))))
 
 ; --- Session ---------------------------------------------------
 
@@ -448,10 +450,12 @@
 
 (defun timeout-handelr ()
   (error-log
-   (join " " (append (list "[error]" (qw "Request timed out"))
-                     (awhen *request*
-                       (list (request-remote-addr it)
-                             (qw (request-request-line it))))))))
+   (join " "
+         "[error]"
+         (qw "Request timed out")
+         (awhen *request*
+           (join " " (request-remote-addr it)
+                 (qw (request-request-line it)))))))
 
 (defun read-request ()
   (awhen (read-line *http-stream* nil)
@@ -653,7 +657,7 @@
   (->string "http://" (header-field "Host") "/"))
 
 (defun page-uri (&rest args)
-  (->string (host-uri) (join "/" args) "/"))
+  (->string (host-uri) (apply #'join (append '("/") args)) "/"))
 
 (defun uri-path (n)
   (let* ((u1 (subseq (request-uri *request*) 1))
