@@ -4,8 +4,7 @@
 (in-package :cl-http-server-tests)
 
 (progn
-  (let ((srv (make-server :public-dir *test-public-dir* :port 8080)))
-    (setf *srv* (start-server srv))
-    (unwind-protect
-         (5am:run! 'cl-http-server)
-      (stop-server *srv*))))
+  (setf *srv* (start-server (make-server :public-dir *test-public-dir* :port 8080)))
+  (unwind-protect
+       (5am:run! 'cl-http-server)
+    (stop-server *srv*)))
