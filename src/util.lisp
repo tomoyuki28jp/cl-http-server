@@ -66,9 +66,6 @@
       (format s "~VR" base
               (random base *the-random-state*)))))
 
-(defun preg-match (regexp str)
-  (scan-to-strings (create-scanner regexp) str))
-
 (defun uri-encode (str)
   (with-output-to-string (s)
     (loop for c across str

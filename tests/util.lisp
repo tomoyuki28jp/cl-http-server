@@ -77,18 +77,6 @@
          do (progn
               (is (null (member r (remseq lst i (1+ i)))))))))
 
-(test preg-match
-  (let ((n "12345"))
-    (is (string= (preg-match "[0-9]" n) "1")))
-  (let ((n "12345"))
-    (is (string= (preg-match "^[0-9]+$" n) n)))
-  (let ((tel "408-644-6198"))
-    (is (string= (preg-match "^\\d{3}-\\d{3}-\\d{4}$" tel) tel)))
-  (let ((s "asdfgjkl"))
-    (is (string= (preg-match "^[a-z]+$" s) s)))
-  (let ((s "ADLBDB"))
-    (is (string= (preg-match "^[A-Z]+$" s) s))))
-
 (test uri-encode
   (is (string= (uri-encode "ニュース速報")
                "%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%B9%E9%80%9F%E5%A0%B1"))

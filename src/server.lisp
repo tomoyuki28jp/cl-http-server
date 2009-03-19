@@ -4,7 +4,7 @@
 
 ; Sample rewrite rule (You can also use add-route function):
 ;(defun sample-rewrite-rule (uri)
-;  (when (aand (preg-match "(\.ico|\.gif|\.jpeg|\.jpg|\.png|)$" uri)
+;  (when (aand (scan-to-strings "(\.ico|\.gif|\.jpeg|\.jpg|\.png|)$" uri)
 ;              (not (string= it "")))
 ;    "/test.html"))
 
@@ -39,7 +39,7 @@
   (aif (gethash uri (get-route *server* :static))
        it
        (maphash #'(lambda (regex dispatcher)
-                    (when (preg-match regex uri)
+                    (when (scan-to-strings regex uri)
                       (return-from matched-route dispatcher)))
                 (get-route *server* :regex))))
 

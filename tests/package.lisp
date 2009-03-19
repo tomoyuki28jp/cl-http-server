@@ -5,7 +5,6 @@
   (:import-from :cl-http-server
                 :->string
                 :assoc-ref
-                :preg-match
                 :html
                 :random-string))
 

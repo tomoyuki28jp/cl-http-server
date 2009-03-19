@@ -54,7 +54,7 @@
               (car (split "; " it))))))
 
 (defun test-rewrite-rule (uri)
-  (let ((match (preg-match "(\.ico|\.gif|\.jpeg|\.jpg|\.png|)$" uri)))
+  (let ((match (scan-to-strings "(\.ico|\.gif|\.jpeg|\.jpg|\.png|)$" uri)))
     (when (not (string= match ""))
       "/test.html")))
 
@@ -164,7 +164,7 @@
 ;      (input-text/ "foo")))
 ;  (let ((c (make-instance 'cookie-jar)))
 ;    (multiple-value-bind (match regs)
-;        (preg-match "NAME=\"cid\" VALUE=\"(.+)\""
+;        (scan-to-strings "NAME=\"cid\" VALUE=\"(.+)\""
 ;                    (http-request
 ;                     "http://localhost:8080/page-lambda-test1"
 ;                     :cookie-jar c))
