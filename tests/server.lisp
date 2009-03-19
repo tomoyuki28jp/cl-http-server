@@ -64,7 +64,7 @@
 (defun defpage-test1 ()
   (html :body "defpage-test1"))
 
-; Drakma has a bug which drakma don't send cookies when a request uri is 
+; Drakma has a bug which drakma don't send cookies when the request uri is 
 ; a root directory even when cookie path is set to "/". This function is 
 ; to avoid that bug. The bug has been alread fixed in dev repo on 2009/02/25.
 ; http://bknr.net/trac/changeset/4322
