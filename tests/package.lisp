@@ -1,12 +1,14 @@
 (in-package :cl-user)
 
 (defpackage :cl-http-server-tests
-  (:use :cl :cl-http-server :anaphora :5am :drakma :cl-ppcre))
+  (:use :cl :cl-http-server :anaphora :5am :drakma :cl-ppcre)
+  (:import-from :cl-http-server
+                :->string
+                :assoc-ref
+                :preg-match
+                :html
+                :random-string))
 
 (in-package :cl-http-server-tests)
 
 (def-suite cl-http-server)
-
-(loop for s in
-      '("ASSOC-REF" "->STRING" "PREG-MATCH" "HTML" "RANDOM-STRING")
-      do (import (find-symbol s (find-package 'cl-http-server))))
