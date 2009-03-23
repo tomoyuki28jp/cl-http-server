@@ -10,12 +10,6 @@
   (is (string= (join "|" "a" "i" "u") "a|i|u"))
   (is (string= (join ""  "a" "i" "u") "aiu")))
 
-(test assoc-ref
-  (let ((lst '((200 . "number"))))
-    (is (assoc-ref 200 lst)) "number")
-  (let ((lst '(("200" . "string"))))
-    (is (assoc-ref "200" lst :test 'equal)) "string"))
-
 (test with-struct
   (defstruct str
     (s1)

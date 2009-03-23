@@ -17,10 +17,6 @@
     (format nil (->string "~{~A~^" joiner "~}")
             (remove nil args))))
 
-(defun assoc-ref (item alist &rest args)
-  (awhen (apply #'assoc item alist args)
-       (cdr it)))
-
 (defmacro with-struct ((name . fields) struct &body body)
   (let ((gs (gensym)))
     `(let ((,gs ,struct))

@@ -50,7 +50,7 @@
       (http-request (->string "http://localhost:8080/" uri))
     (declare (ignore body status-code uri stream close reason-phrase))
     (equalp content-type
-            (awhen (cl-http-server::assoc-ref :content-type headers)
+            (awhen (cdr (assoc :content-type headers))
               (car (split "; " it))))))
 
 (defun test-rewrite-rule (uri)
@@ -91,7 +91,7 @@
   (setf *test-tmp-files* nil)
   (defpage upload-test ()
     (awhen (post-param "foo")
-      (awhen (assoc-ref "tmp-name" it :test #'equal)
+      (awhen (cdr (assoc "tmp-name" it :test #'equal))
         (push it *test-tmp-files*)
         (serve-file it :public-file-only nil))))
   (is (upload-file= "test"))

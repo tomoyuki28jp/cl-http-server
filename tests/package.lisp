@@ -4,7 +4,6 @@
   (:use :cl :cl-http-server :anaphora :5am :drakma :cl-ppcre)
   (:import-from :cl-http-server
                 :->string
-                :assoc-ref
                 :html
                 :random-string))
 

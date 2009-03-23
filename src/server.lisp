@@ -165,7 +165,7 @@
     (request-cookies it)))
 
 (defun get-cookie (name &optional request)
-  (assoc-ref name (get-cookies request) :test #'equalp))
+  (cdr (assoc name (get-cookies request) :test #'equalp)))
 
 (defun set-cookie (name &optional (value "")
                    (expires "Sun, 17-Jan-2038 19:14:07 GMT"))
@@ -190,12 +190,12 @@
                    (with-standard-io-syntax
                        (read in nil nil)))))
           (if name
-            (assoc-ref name s :test #'equalp)
+            (cdr (assoc name s :test #'equalp))
             s))))))
 
 (defun rem-session (name)
   (let ((session (get-session)))
-    (when (assoc-ref name session :test #'equalp)
+    (when (cdr (assoc name session :test #'equalp))
       (set-session
        (remove-if #'(lambda (x) (string= name (car x)))
                   session)))))
@@ -502,7 +502,7 @@
                (read-sequence post-query *http-stream*)
                (parse-params (uri-decode post-query)))))
           ((string= type "multipart/form-data")
-           (let ((bound (assoc-ref "boundary" attr :test #'string=)))
+           (let ((bound (cdr (assoc "boundary" attr :test #'string=))))
              (rfc2388-binary:read-mime *http-stream* bound
                                        #'rfc2388-callback))))))
 
@@ -569,7 +569,7 @@
 (defun delete-tmp-file ()
   (loop for p in (post-params)
         when (listp (cdr p))
-          do (awhen (assoc-ref "tmp-name" (cdr p) :test #'equal)
+          do (awhen (cdr (assoc "tmp-name" (cdr p) :test #'equal))
                (when (and it (probe-file it))
                  (delete-file it)))))
 
@@ -673,21 +673,21 @@
     (request-get-params it)))
  
 (defun get-param (name &optional request)
-  (assoc-ref name (get-params request) :test #'equalp))
+  (cdr (assoc name (get-params request) :test #'equalp)))
 
 (defun post-params (&optional request)
   (awhen (or request *request*)
     (request-post-params it)))
 
 (defun post-param (name &optional request)
-  (assoc-ref name (post-params request) :test #'equalp))
+  (cdr (assoc name (post-params request) :test #'equalp)))
 
 (defun header-fields (&optional request)
   (awhen (or request *request*)
     (request-header-fields it)))
 
 (defun header-field (name &optional request)
-  (assoc-ref name (header-fields request) :test #'equalp))
+  (cdr (assoc name (header-fields request) :test #'equalp)))
 
 (defun redirect (uri)
   (setf (response-status-code *response*) 302)
@@ -708,7 +708,7 @@
 (defun get-file-data (name key &optional (param-fn #'post-param))
   (awhen (funcall param-fn name)
     (when (listp it)
-      (assoc-ref key it :test #'equalp))))
+      (cdr (assoc key it :test #'equalp)))))
 
 (defun file-name (name) (get-file-data name "name"))
 (defun file-type (name) (get-file-data name "type"))
