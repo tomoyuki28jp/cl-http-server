@@ -6,8 +6,7 @@ framework. I haven't done much tests on it after dividing it from web4r system.
 
 Library dependencies
 ====================
-anaphora - http://common-lisp.net/project/anaphora/
-cl-ppcre - http://www.weitz.de/cl-ppcre/
+my-util - http://github.com/tomoyuki28jp/my-util/tree/master
 usocket - http://common-lisp.net/project/usocket/
 bordeaux-threads - http://common-lisp.net/project/bordeaux-threads/
 cl-fad - http://www.weitz.de/cl-fad/
