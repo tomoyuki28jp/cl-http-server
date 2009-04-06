@@ -9,7 +9,7 @@
   :author   "Tomoyuki Matsumoto <tomoyuki28jp@no-spam@yahoo.co.jp>"
   :licence  "BSD"
   :description "tests for cl-http-server"
-  :depends-on  (:cl-http-server :anaphora :fiveam :drakma :cl-ppcre)
+  :depends-on  (:cl-http-server :my-util :fiveam :drakma)
   :components  ((:module "tests"
                          :serial  t
                          :components ((:file "package")

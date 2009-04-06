@@ -1,28 +1,11 @@
 (in-package :cl-http-server)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun ->string (&rest args)
-    (with-output-to-string (s)
-      (dolist (a args)
-        (princ (or a "") s)))))
-
-(defun ->keyword (x)
-  (if (keywordp x)
-      x
-      (let ((str (if (stringp x) x (->string x))))
-        (intern (string-upcase str) :keyword))))
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun join (joiner &rest args)
-    (format nil (->string "~{~A~^" joiner "~}")
-            (remove nil args))))
-
 (defmacro with-struct ((name . fields) struct &body body)
   (let ((gs (gensym)))
     `(let ((,gs ,struct))
        (symbol-macrolet
            ,(mapcar #'(lambda (f)
-                        `(,f (,(intern (->string name "-" f)) ,gs)))
+                        `(,f (,(intern (concat name "-" f)) ,gs)))
                     fields)
          ,@body))))
 
@@ -99,7 +82,7 @@
 
 (defun uniq-file-name (dir &optional (length 10))
   (dotimes (x 5)
-    (let ((file (->string dir (random-string length))))
+    (let ((file (concat dir (random-string length))))
       (unless (probe-file file)
         (return-from uniq-file-name file)))))
 

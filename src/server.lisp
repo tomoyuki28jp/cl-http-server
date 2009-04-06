@@ -68,7 +68,7 @@
   `(progn
      ,@(loop for d in dirs
              collect `(unless (string= (subseq ,d (1- (length ,d))) "/")
-                        (setf ,d (->string ,d "/")))
+                        (setf ,d (concat ,d "/")))
              collect `(ensure-directories-exist ,d :verbose nil))))
 
 (defun validate-server (server)
@@ -90,7 +90,7 @@
   (setf (server-thread server)
         (bordeaux-threads:make-thread
          (lambda () (start-server-thread server))
-         :name (->string "server-" (server-port server))))
+         :name (concat "server-" (server-port server))))
   server)
 
 (defun start-server-thread (server)
@@ -120,34 +120,34 @@
                           :direction :output
                           :if-exists :append
                           :if-does-not-exist :create)
-    (format stream (->string content "~%"))))
+    (format stream (concat content "~%"))))
 
 (defun access-log ()
   (write-log
-   (->string (server-log-save-dir *server*)
+   (concat (server-log-save-dir *server*)
            "access." (car (split " " (iso-time))) ".log")
    (join " "
          (request-remote-addr *request*)
-         (->string "[" (iso-time) "]")
+         (concat "[" (iso-time) "]")
          (qw (request-request-line *request*))
          (response-status-code *response*)
          (qw (header-field "User-Agent")))))
 
 (defun error-log (&rest content)
   (write-log
-   (->string (if *server* (server-log-save-dir *server*) "/tmp/")
+   (concat (if *server* (server-log-save-dir *server*) "/tmp/")
            "error." (car (split " " (iso-time))) ".log")
    (join " "
-         (->string "[" (iso-time) "]")
-         (apply #'->string content))))
+         (concat "[" (iso-time) "]")
+         (apply #'concat content))))
 
 (defun debug-log (&rest content)
   (write-log
-   (->string (if *server* (server-log-save-dir *server*) "/tmp/")
-               "debug." (car (split " " (iso-time))) ".log")
+   (concat (if *server* (server-log-save-dir *server*) "/tmp/")
+           "debug." (car (split " " (iso-time))) ".log")
    (join " "
-         (->string "[" (iso-time) "]")
-         (apply #'->string content))))
+         (concat "[" (iso-time) "]")
+         (apply #'concat content))))
 
 ; --- Session ---------------------------------------------------
 
@@ -180,7 +180,7 @@
 
 (defun renew-cookie-lifetime (sid)
   (trivial-shell:shell-command
-   (->string "touch -m " (session-file sid))))
+   (concat "touch -m " (session-file sid))))
 
 (defun get-session (&optional name)
   (awhen (aand *sid* (session-file it))
@@ -286,8 +286,8 @@
 
 (defun %status-page (status-code)
   (let ((reason (reason-phrase status-code)))
-    (html :title (->string status-code " " reason)
-          :body  (->string status-code " " reason))))
+    (html :title (concat status-code " " reason)
+          :body  (concat status-code " " reason))))
 
 (defun status-page (status-code)
   (setf (response-status-code *response*) status-code)
@@ -360,7 +360,7 @@
 
 (defun charset ()
   (aif (response-charset *response*)
-       (->string "; charset=" (string-downcase (->string it)))
+       (concat "; charset=" (string-downcase (->string it)))
        ""))
 
 (defun content-length (content)
@@ -370,7 +370,7 @@
 
 (defun send-header ()
   (flet ((send-http-line (line)
-           (princ (->string line *crlf*) *http-stream*)))
+           (princ (concat line *crlf*) *http-stream*)))
     (with-flexi-stream (*http-stream* :iso-8859-1)
       (send-http-line (response-status-line (response-status-code *response*)))
       (awhen (response-content-type *response*)
@@ -607,7 +607,7 @@
 
 (defun content-type (file)
   (let* ((file  (namestring file))
-         (type  (trivial-shell:shell-command (->string "file " file)))
+         (type  (trivial-shell:shell-command (concat "file " file)))
          (s (split " " (string-trim '(#\Newline) type))))
     (cond ((equalp "image" (nth 2 s))
            (cond ((equalp "PNG"  (nth 1 s)) "image/png")
@@ -654,10 +654,10 @@
 ; --- Util ------------------------------------------------------
 
 (defun host-uri ()
-  (->string "http://" (header-field "Host") "/"))
+  (concat "http://" (header-field "Host") "/"))
 
 (defun page-uri (&rest args)
-  (->string (host-uri) (apply #'join (append '("/") args)) "/"))
+  (concat (host-uri) (apply #'join (append '("/") args)) "/"))
 
 (defun uri-path (n)
   (let* ((u1 (subseq (request-uri *request*) 1))

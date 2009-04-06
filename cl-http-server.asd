@@ -9,7 +9,7 @@
   :author   "Tomoyuki Matsumoto <tomoyuki28jp@no-spam@yahoo.co.jp>"
   :licence  "BSD"
   :description "Common Lisp HTTP Server"
-  :depends-on  (:anaphora :cl-ppcre :usocket :bordeaux-threads :cl-fad
+  :depends-on  (:my-util :usocket :bordeaux-threads :cl-fad
                 :trivial-shell :flexi-streams :rfc2388-binary)
   :components  ((:module "src"
                          :serial  t

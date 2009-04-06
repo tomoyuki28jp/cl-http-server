@@ -1,15 +1,5 @@
 (in-package :cl-http-server-tests)
 
-(test concat
-  (is (string= (concat "a" "i" "u" "e" "o") "aiueo"))
-  (is (string= (concat nil "a" "i" "u" "e" "o") "aiueo"))
-  (is (string= (concat nil "a" "i" "u" "e" "o" nil) "aiueo"))
-  (is (string= (concat nil "a" nil "i" nil "u" nil "e" nil "o" nil) "aiueo")))
-
-(test join
-  (is (string= (join "|" "a" "i" "u") "a|i|u"))
-  (is (string= (join ""  "a" "i" "u") "aiu")))
-
 (test with-struct
   (defstruct str
     (s1)
@@ -57,11 +47,6 @@
   (is (string= (qw "str") "\"str\""))
   (is (string= (qw nil) "\"\""))
   (is (string= (qw "\"") "\"\"\"")))
-
-(test ->keyword
-  (is (eq (->keyword "k1") :k1))
-  (is (eq (->keyword 'k2)  :k2))
-  (is (eq (->keyword :k3)  :k3)))
 
 (test random-string
  (let ((lst (loop for i from 1 to 10
