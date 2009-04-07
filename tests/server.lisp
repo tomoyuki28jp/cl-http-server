@@ -14,11 +14,11 @@
   (string= (regex-replace-all *nl* str1 "")
            (regex-replace-all *nl* str2 "")))
 
-(defmacro shtml= (shtml html)
+(defmacro sml= (sml ml)
   `(let ((*http-char-stream* (make-string-output-stream)))
-     ,shtml
+     ,sml
      (string=* (get-output-stream-string *http-char-stream*)
-               ,html)))
+               ,ml)))
 
 (defun file-content= (file &optional content)
   (unless content
@@ -109,25 +109,25 @@
 
 (test get-params
   (defpage get-params-test () (p/ (get-params)))
-  (is-true (shtml= (p/ '(("k1" . "v1")("k2" . "v2")("k3" . "v3")))
+  (is-true (sml= (p/ '(("k1" . "v1")("k2" . "v2")("k3" . "v3")))
                    (http-request
                     "http://localhost:8080/get-params-test?k1=v1&k2=v2&k3=v3"))))
 
 (test get-param
   (defpage get-param-test () (p/ (get-param "k1")))
-  (is-true (shtml= (p/ "v1")
+  (is-true (sml= (p/ "v1")
                    (http-request
                     "http://localhost:8080/get-param-test?k1=v1"))))
 
 (test post-params
   (defpage post-params-test () (p/ (post-params)))
-  (is-true (shtml= (p/ '(("k1" . "v1")("k2" . "v2")))
+  (is-true (sml= (p/ '(("k1" . "v1")("k2" . "v2")))
                    (http-request
                     "http://localhost:8080/post-params-test"
                     :method :post :form-data t
                     :parameters '(("k1" . "v1") ("k2" . "v2")))))
                                         ; (multipart/form-data)
-  (is-true (shtml= (p/ '(("k1" . "v1")("k2" . "v2")))
+  (is-true (sml= (p/ '(("k1" . "v1")("k2" . "v2")))
                    (http-request
                     "http://localhost:8080/post-params-test"
                     :method :post
@@ -135,24 +135,24 @@
 
 (test post-param
   (defpage post-param-test () (p/ (post-param "k1")))
-  (is-true (shtml= (p/ "v1")
+  (is-true (sml= (p/ "v1")
                    (http-request
                     "http://localhost:8080/post-param-test"
                     :method :post :form-data t :parameters '(("k1" . "v1"))))))
 
 (test defpage
   (defpage defpage-test1 () (defpage-test1))
-  (is-true (shtml= (defpage-test1)
+  (is-true (sml= (defpage-test1)
                    (http-request "http://localhost:8080/defpage-test1")))
   (defpage defpage-test2 (p1 p2) (p/ p1 p2))
-  (is-true (shtml= (p/ "pv1" "pv2")
+  (is-true (sml= (p/ "pv1" "pv2")
                    (http-request "http://localhost:8080/defpage-test2/pv1/pv2/")))
   (defpage defpage-test3 (:get p1 p2) (p/ p1 p2))
-  (is-true (shtml= (p/ "pv1" "pv2")
+  (is-true (sml= (p/ "pv1" "pv2")
                    (http-request
                     "http://localhost:8080/defpage-test3?p1=pv1&p2=pv2")))
   (defpage defpage-test4 (:post p1 p2) (p/ p1 p2))
-  (is-true (shtml= (p/ "pv1" "pv2")
+  (is-true (sml= (p/ "pv1" "pv2")
                    (http-request
                     "http://localhost:8080/defpage-test4"
                     :method :post :form-data t
@@ -168,7 +168,7 @@
 ;                    (http-request
 ;                     "http://localhost:8080/page-lambda-test1"
 ;                     :cookie-jar c))
-;      (is-true (shtml= (p/ "ok")
+;      (is-true (sml= (p/ "ok")
 ;                       (http-request  "http://localhost:8080//"
 ;                                      :method :post :form-data t
 ;                                      :parameters
@@ -177,15 +177,15 @@
 ;                                      :cookie-jar c))))))
 
 (test page
-  (is-true (shtml= (cl-http-server::%status-page 400)
+  (is-true (sml= (cl-http-server::%status-page 400)
                    (http-request "http://localhost:8080/../../../../../../etc/passwd")))
-  (is-true (shtml= (cl-http-server::%status-page 404)
+  (is-true (sml= (cl-http-server::%status-page 404)
                    (http-request "http://localhost:8080/nopage")))
   (defpage page-test1 () (matched-page))
   (defpage page-test2 () (page 'page-test1))
-  (is-true (shtml= (matched-page)
+  (is-true (sml= (matched-page)
                    (http-request "http://localhost:8080/page-test2")))
-  (is-true (shtml= (default-page)
+  (is-true (sml= (default-page)
                    (http-request "http://localhost:8080/"))))
 
 (test status-code
@@ -231,24 +231,24 @@
 
 (test static-route
   (add-route *srv* :static "/nopage" 'matched-page)
-  (is-true (shtml= (matched-page)
+  (is-true (sml= (matched-page)
                    (http-request "http://localhost:8080/nopage")))
   (rem-route *srv* :static "/nopage")
-  (is-true (shtml= (cl-http-server::%status-page 404)
+  (is-true (sml= (cl-http-server::%status-page 404)
                    (http-request "http://localhost:8080/nopage"))))
 
 (test regex-route
-  (is-true (shtml= (cl-http-server::%status-page 404)
+  (is-true (sml= (cl-http-server::%status-page 404)
                    (http-request "http://localhost:8080/matched1")))
   (add-route *srv* :regex "^/matched" 'matched-page)
-  (is-true (shtml= (matched-page)
+  (is-true (sml= (matched-page)
                    (http-request "http://localhost:8080/matched1")))
-  (is-true (shtml= (cl-http-server::%status-page 404)
+  (is-true (sml= (cl-http-server::%status-page 404)
                    (http-request "http://localhost:8080/no/matched1")))
-  (is-true (shtml= (matched-page)
+  (is-true (sml= (matched-page)
                    (http-request "http://localhost:8080/matched2")))
   (rem-route *srv* :regex "^/matched")
-  (is-true (shtml= (cl-http-server::%status-page 404)
+  (is-true (sml= (cl-http-server::%status-page 404)
                    (http-request "http://localhost:8080/matched1"))))
 
 (test cookie
@@ -257,7 +257,7 @@
     (defpage cookie-get-test () (p/ (get-cookie "cookie-set-test1")))
     (let ((cookie (make-instance 'cookie-jar)))
       (http-request "http://localhost:8080/cookie-set-test" :cookie-jar cookie)
-      (is-true (shtml= (p/ r)
+      (is-true (sml= (p/ r)
                        (http-request "http://localhost:8080/cookie-get-test"
                                      :cookie-jar cookie))))))
 
@@ -267,7 +267,7 @@
     (defpage session-get-test () (p/ (get-session "session-set-test1")))
     (let ((cookie (make-instance 'cookie-jar)))
       (http-request "http://localhost:8080/session-set-test" :cookie-jar cookie)
-      (is-true (shtml= (p/ r)
+      (is-true (sml= (p/ r)
                        (http-request "http://localhost:8080/session-get-test"
                                      :cookie-jar cookie))))))
 
