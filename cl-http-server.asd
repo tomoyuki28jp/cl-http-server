@@ -6,7 +6,7 @@
 
 (defsystem  :cl-http-server
   :name     "cl-http-server"
-  :author   "Tomoyuki Matsumoto <tomoyuki28jp@no-spam@yahoo.co.jp>"
+  :author   "Tomoyuki Matsumoto <tomoyuki28jp@gmail.com>"
   :licence  "BSD"
   :description "Common Lisp HTTP Server"
   :depends-on  (:my-util :usocket :bordeaux-threads :cl-fad
