@@ -303,24 +303,6 @@
        (apply it args)
        (default-page)))
 
-; --- Hooks -----------------------------------------------------
-; Defined hooks
-; - before-handle-request
-; - after-handle-request
-
-(defun add-hook (hook fn)
-  "Add function to hook"
-  (let ((hooks (gethash hook *hooks*)))
-    (unless (member fn hooks)
-      (setf (gethash hook *hooks*) (append hooks (list fn))))))
-
-(defun call-hooks (hook)
-  (awhen (gethash hook *hooks*)
-    (loop for h in it
-          do (funcall h))))
-
-(add-hook 'after-handle-request #'access-log)
-
 ; --- Response --------------------------------------------------
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -385,7 +367,7 @@
             (*http-char-stream*
              (make-flexi-stream *http-binary-stream* :external-format
                                 (response-charset *response*))))
-       (call-hooks 'before-handle-request)
+       (run-hooks 'before-handle-request)
        (unwind-protect
             (progn ,@body)
          (unless (response-sent *response*)
@@ -398,7 +380,9 @@
                       (princ (octets-to-string ,content :external-format it)
                              *http-stream*))
                     (write-sequence ,content *http-stream*)))))
-         (call-hooks 'after-handle-request)))))
+         (run-hooks 'after-handle-request)))))
+
+(add-hook 'after-handle-request #'access-log)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun rfc-1123-date (&optional (time (get-universal-time)))
