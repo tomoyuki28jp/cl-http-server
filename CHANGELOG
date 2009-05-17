@@ -1,3 +1,8 @@
+Version 0.0.3
+2009-05-18
+Updated to use add-hook and run-hooks functions defined in the my-util package
+Fixed the content-type function to make it work with Ubuntu 9.04
+
 Version 0.0.2
 2009-04-06
 Updated to use my-util package

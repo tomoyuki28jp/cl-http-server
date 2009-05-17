@@ -5,6 +5,7 @@
 (in-package :cl-http-server-asd)
 
 (defsystem  :cl-http-server
+  :version "0.0.3"
   :name     "cl-http-server"
   :author   "Tomoyuki Matsumoto <tomoyuki28jp@gmail.com>"
   :licence  "BSD"
