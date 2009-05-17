@@ -67,3 +67,5 @@
            :file-size
            :file-save-name
            ))
+
+(asdf-version<= :my-util "0.0.4")
